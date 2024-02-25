@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const BEST_MOVE_API_URL =
-  "https://tan-bright-duckling.cyclic.app/best_next_move";
+  "https://funny-boa-woolens.cyclic.app/best_next_move";
 
 const bestNextMove = async (board, for_player) => {
   try {

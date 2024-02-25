@@ -43,6 +43,14 @@ function TicTacToe() {
   };
 
   function checkWinner() {
+    var allEmpty = squares.every(function (row) {
+      return row.every(function (cell) {
+        return cell === EMPTY_CELL;
+      });
+    });
+    if (allEmpty) {
+      return;
+    }
     boardChecker(squares).then((boardStat) => {
       if (boardStat.hasWinner) {
         setGameState(

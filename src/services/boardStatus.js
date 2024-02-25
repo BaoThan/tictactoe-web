@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const BOARD_CHECK_API_URL =
-  "https://tan-bright-duckling.cyclic.app/board_status";
+  "https://funny-boa-woolens.cyclic.app/board_status";
 
 class BoardStatus {
   constructor(hasWinner, isFull, winner) {
