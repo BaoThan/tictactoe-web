@@ -5,7 +5,7 @@ import GameState from "./GameState";
 import Reset from "./Reset";
 import { boardChecker } from "../services/boardStatus";
 import GameModeButton from "./GameModeButton";
-import { bestNextMove, best_next_move } from "../services/nextMove";
+import { bestNextMove } from "../services/nextMove";
 
 const PLAYER_X = "X";
 const PLAYER_O = "O";
@@ -20,8 +20,15 @@ function TicTacToe() {
   const [playerTurn, setPlayerTurn] = useState(HUMAN);
   const [gameState, setGameState] = useState(GameState.inProgress);
   const [isBotMode, setIsBotMode] = useState(false);
+  const [disabled, setDisabled] = useState(false);
 
   const handleSquareClick = (row, col) => {
+    if (disabled) {
+      return;
+    }
+    if (isBotMode && playerTurn == BOT) {
+      return;
+    }
     if (squares[row][col] !== EMPTY_CELL) {
       return;
     }
@@ -34,6 +41,7 @@ function TicTacToe() {
   const handleReset = () => {
     setGameState(GameState.inProgress);
     setSquares(Array.from({ length: 3 }, () => Array(3).fill(EMPTY_CELL)));
+    setDisabled(false);
     setPlayerTurn(PLAYER_X);
   };
 
@@ -48,9 +56,12 @@ function TicTacToe() {
         return cell === EMPTY_CELL;
       });
     });
+
     if (allEmpty) {
+      setDisabled(false);
       return;
     }
+
     boardChecker(squares).then((boardStat) => {
       if (boardStat.hasWinner) {
         setGameState(
@@ -58,14 +69,17 @@ function TicTacToe() {
             ? GameState.playerXWins
             : GameState.playerOWins
         );
+        setDisabled(true);
         return;
       } else if (boardStat.isFull) {
         setGameState(GameState.draw);
+        setDisabled(true);
         return;
       }
 
       if (isBotMode && playerTurn == BOT) {
         botMakeMove(squares);
+        setDisabled(false);
       }
     });
   }
@@ -91,7 +105,11 @@ function TicTacToe() {
     <div>
       <h1>Tic Tac Toe</h1>
       <GameModeButton onClick={handleModeToggle} />
-      <Board squares={squares} onSquareClick={handleSquareClick} />
+      <Board
+        disabled={disabled}
+        squares={squares}
+        onSquareClick={handleSquareClick}
+      />
       <GameOver gameState={gameState} />
       <Reset gameState={gameState} onReset={handleReset} />
     </div>
